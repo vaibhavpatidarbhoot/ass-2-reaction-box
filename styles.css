@@ -1,36 +1,60 @@
-/* General page styling */
-body {
+/* Reset and base styling */
+* {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
   background-color: #f0f0f0;
-  text-align: center;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  text-align: center;
+  padding: 1rem;
 }
 
-/* Container for content */
+/* Container styling */
 .container {
-  max-width: 600px;
-  width: 90%;
+  max-width: 90%;
+  width: 100%;
   position: relative;
 }
 
-/* The clickable box */
+/* Reaction box */
 #box {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   position: absolute;
   display: none;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
 }
 
-/* Reaction time display */
+/* Result display */
 #reaction-time {
+  margin-top: 1.5rem;
   font-size: 1.2rem;
-  margin-top: 20px;
-  color: #333;
+  color: #222;
+}
+
+/* Responsive adjustments */
+@media (min-width: 600px) {
+  #box {
+    width: 100px;
+    height: 100px;
+  }
+
+  #reaction-time {
+    font-size: 1.4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 600px;
+  }
 }
