@@ -1,23 +1,13 @@
-// script.js
+// Select necessary DOM elements
 const box = document.getElementById('box');
-const result = document.getElementById('result');
+const output = document.getElementById('reaction-time');
 
-let startTime, endTime;
+let startTime = 0;
 
-// Function to display the box at a random position with a random color
-function showBox() {
-  const top = Math.random() * (window.innerHeight - 100);
-  const left = Math.random() * (window.innerWidth - 100);
-
-  box.style.top = `${top}px`;
-  box.style.left = `${left}px`;
-  box.style.display = 'block';
-  box.style.backgroundColor = getRandomColor();
-  startTime = Date.now();
-}
-
-// Function to generate a random hex color
-function getRandomColor() {
+/**
+ * Generates a random hexadecimal color string
+ */
+function generateRandomColor() {
   const letters = '0123456789ABCDEF';
   let color = '#';
   for (let i = 0; i < 6; i++) {
@@ -26,22 +16,42 @@ function getRandomColor() {
   return color;
 }
 
-// Function to delay appearance of box randomly
-function appearAfterDelay() {
-  const delay = Math.random() * 2000 + 1000;
+/**
+ * Displays the box at a random position on screen
+ */
+function showBox() {
+  const maxTop = window.innerHeight - 100;
+  const maxLeft = window.innerWidth - 100;
+
+  box.style.top = `${Math.random() * maxTop}px`;
+  box.style.left = `${Math.random() * maxLeft}px`;
+  box.style.display = 'block';
+  box.style.backgroundColor = generateRandomColor();
+  startTime = Date.now();
+}
+
+/**
+ * Hides the box and shows a new one after a random delay
+ */
+function startNextRound() {
+  const delay = Math.random() * 2000 + 1000; // 1–3 seconds
   setTimeout(showBox, delay);
 }
 
-// Function to handle click and calculate reaction time
+/**
+ * Handles the click on the box and calculates the reaction time
+ */
 function handleBoxClick() {
-  endTime = Date.now();
-  const reactionTime = (endTime - startTime) / 1000;
-  result.textContent = `Your reaction time is ${reactionTime.toFixed(3)} seconds.`;
+  const endTime = Date.now();
+  const timeTaken = (endTime - startTime) / 1000;
+
+  output.textContent = `Your reaction time is ${timeTaken.toFixed(3)} seconds.`;
   box.style.display = 'none';
-  appearAfterDelay();
+  box.style.backgroundColor = generateRandomColor(); // Change color after result
+
+  startNextRound();
 }
 
+// Initialize game
 box.addEventListener('click', handleBoxClick);
-
-// Start the game
-appearAfterDelay();
+startNextRound();
