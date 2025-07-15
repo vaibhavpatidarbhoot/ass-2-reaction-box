@@ -19,6 +19,10 @@
       display: block;
       margin-left: auto;
       margin-right: auto;
+      width: 90vw;
+      height: 60vh;
+      max-width: 600px;
+      max-height: 400px;
     }
 
     #result {
@@ -30,7 +34,7 @@
 <body>
   <h1>Test Your Reaction Speed</h1>
   <p>Click the box as soon as it appears!</p>
-  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <canvas id="gameCanvas"></canvas>
   <p id="result"></p>
 
   <script>
@@ -42,13 +46,30 @@
     let startTime = 0;
     let boxVisible = false;
 
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function resizeCanvas() {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     function drawBox() {
       box.size = Math.floor(Math.random() * 50) + 50; // 50–100 px
       box.x = Math.floor(Math.random() * (canvas.width - box.size));
       box.y = Math.floor(Math.random() * (canvas.height - box.size));
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "red";
+      ctx.fillStyle = getRandomColor();
       ctx.fillRect(box.x, box.y, box.size, box.size);
 
       boxVisible = true;
@@ -71,8 +92,7 @@
         const reactionTime = (Date.now() - startTime) / 1000;
         result.textContent = `Your reaction time: ${reactionTime.toFixed(3)} seconds`;
         boxVisible = false;
-
-        setTimeout(drawBox, Math.random() * 2000 + 500); // Next box in 0.5–2.5s
+        drawBox(); // Immediately show new colorful box at new location
       }
     });
 
