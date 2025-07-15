@@ -2,18 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reaction Time Tester</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Your Reaction Speed</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      margin-top: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
 </head>
 <body>
-  <main class="container">
-    <h1>Test Your Reaction Speed</h1>
-    <p>Click the box as fast as you can when it appears on the screen.</p>
-    <div id="box"></div>
-    <p id="reaction-time"></p>
-  </main>
+  <h1>Test Your Reaction Speed</h1>
+  <p>Click the box as soon as it appears!</p>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <p id="result"></p>
 
-  <script src="script.js"></script>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const result = document.getElementById("result");
+
+    let box = { x: 0, y: 0, size: 50 };
+    let startTime = 0;
+    let boxVisible = false;
+
+    function drawBox() {
+      box.size = Math.floor(Math.random() * 50) + 50; // 50–100 px
+      box.x = Math.floor(Math.random() * (canvas.width - box.size));
+      box.y = Math.floor(Math.random() * (canvas.height - box.size));
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "red";
+      ctx.fillRect(box.x, box.y, box.size, box.size);
+
+      boxVisible = true;
+      startTime = Date.now();
+    }
+
+    canvas.addEventListener("click", function (e) {
+      if (!boxVisible) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      if (
+        clickX >= box.x &&
+        clickX <= box.x + box.size &&
+        clickY >= box.y &&
+        clickY <= box.y + box.size
+      ) {
+        const reactionTime = (Date.now() - startTime) / 1000;
+        result.textContent = `Your reaction time: ${reactionTime.toFixed(3)} seconds`;
+        boxVisible = false;
+
+        setTimeout(drawBox, Math.random() * 2000 + 500); // Next box in 0.5–2.5s
+      }
+    });
+
+    // Start game after initial delay
+    setTimeout(drawBox, 1000);
+  </script>
 </body>
 </html>
