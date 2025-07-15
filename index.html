@@ -5,46 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Test Your Reaction Speed</title>
   <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
+    * {
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      box-sizing: border-box;
     }
 
-    canvas {
-      border: 1px solid #ccc;
-      margin-top: 20px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-      width: 90vw;
-      height: 60vh;
-      max-width: 600px;
-      max-height: 400px;
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    h1 {
+      margin-top: 2rem;
     }
 
     #result {
-      margin-top: 20px;
-      font-size: 1.2em;
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .box {
+      position: absolute;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>Test Your Reaction Speed</h1>
   <p>Click the box as soon as it appears!</p>
-  <canvas id="gameCanvas"></canvas>
   <p id="result"></p>
 
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
     const result = document.getElementById("result");
-
-    let box = { x: 0, y: 0, size: 50 };
+    let box = null;
     let startTime = 0;
-    let boxVisible = false;
 
     function getRandomColor() {
       const letters = "0123456789ABCDEF";
@@ -55,49 +54,38 @@
       return color;
     }
 
-    function resizeCanvas() {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-    }
+    function createBox() {
+      if (box) box.remove();
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+      box = document.createElement("div");
+      box.classList.add("box");
 
-    function drawBox() {
-      box.size = Math.floor(Math.random() * 50) + 50; // 50–100 px
-      box.x = Math.floor(Math.random() * (canvas.width - box.size));
-      box.y = Math.floor(Math.random() * (canvas.height - box.size));
+      const size = Math.floor(Math.random() * 50) + 50; // 50-100px
+      const width = window.innerWidth;
+      const height = window.innerHeight;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = getRandomColor();
-      ctx.fillRect(box.x, box.y, box.size, box.size);
+      const x = Math.floor(Math.random() * (width - size));
+      const y = Math.floor(Math.random() * (height - size));
 
-      boxVisible = true;
+      box.style.width = size + "px";
+      box.style.height = size + "px";
+      box.style.left = x + "px";
+      box.style.top = y + "px";
+      box.style.backgroundColor = getRandomColor();
+
+      document.body.appendChild(box);
+
       startTime = Date.now();
-    }
 
-    canvas.addEventListener("click", function (e) {
-      if (!boxVisible) return;
-
-      const rect = canvas.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const clickY = e.clientY - rect.top;
-
-      if (
-        clickX >= box.x &&
-        clickX <= box.x + box.size &&
-        clickY >= box.y &&
-        clickY <= box.y + box.size
-      ) {
+      box.addEventListener("click", () => {
         const reactionTime = (Date.now() - startTime) / 1000;
         result.textContent = `Your reaction time: ${reactionTime.toFixed(3)} seconds`;
-        boxVisible = false;
-        drawBox(); // Immediately show new colorful box at new location
-      }
-    });
+        createBox(); // show next box immediately
+      });
+    }
 
-    // Start game after initial delay
-    setTimeout(drawBox, 1000);
+    // Start game after 1 second
+    setTimeout(createBox, 1000);
   </script>
 </body>
 </html>
